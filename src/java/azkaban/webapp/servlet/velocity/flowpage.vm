@@ -1,12 +1,12 @@
 #*
  * Copyright 2012 LinkedIn Corp.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
@@ -14,7 +14,7 @@
  * the License.
 *#
 
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="en">
 	<head>
 
@@ -25,13 +25,15 @@
     <script type="text/javascript" src="${context}/js/bootstrap-datetimepicker.min.js"></script>
     <script type="text/javascript" src="${context}/js/raphael.min.js"></script>
     <script type="text/javascript" src="${context}/js/morris.min.js"></script>
-		
+
     <script type="text/javascript" src="${context}/js/dust-full-2.2.3.min.js"></script>
 		<script type="text/javascript" src="${context}/js/flowsummary.js"></script>
 		<script type="text/javascript" src="${context}/js/flowstats-no-data.js"></script>
 		<script type="text/javascript" src="${context}/js/flowstats.js"></script>
-		
+
 		<script type="text/javascript" src="${context}/js/azkaban/view/time-graph.js"></script>
+		<script type="text/javascript" src="${context}/js/azkaban/util/schedule.js"></script>
+		<script type="text/javascript" src="${context}/js/azkaban/view/schedule-sla.js"></script>
 		<script type="text/javascript" src="${context}/js/azkaban/view/flow-stats.js"></script>
 		<script type="text/javascript" src="${context}/js/azkaban/view/flow-execute-dialog.js"></script>
 		<script type="text/javascript" src="${context}/js/azkaban/view/flow.js"></script>
@@ -41,7 +43,7 @@
 			var timezone = "${timezone}";
 			var errorMessage = null;
 			var successMessage = null;
-			
+
 			var projectId = ${project.id};
 			var projectName = "${project.name}";
 			var flowId = "${flowid}";
@@ -58,45 +60,45 @@
 #if ($errorMsg)
   #parse ("azkaban/webapp/servlet/velocity/errormsg.vm")
 #else
-	
+
 	## Page header.
 
-		<div class="az-page-header">
+		<div class="az-page-header page-header-bare">
 			<div class="container-full">
 				<div class="row">
-					<div class="col-xs-6">
+					<div class="header-title">
 						<h1><a href="${context}/manager?project=${project.name}&flow=${flowid}">Flow <small>$flowid</small></a></h1>
 					</div>
-					<div class="col-xs-6">
-						<div class="pull-right az-page-header-form">
-							<button type="button" class="btn btn-sm btn-success" id="executebtn">Schedule / Execute Flow</button>
-						</div>
-						<div class="clearfix"></div>
+					<div class="header-control">
+            <div class="pull-right header-form">
+              <button type="button" class="btn btn-sm btn-success" id="executebtn">Schedule / Execute Flow</button>
+            </div>
 					</div>
 				</div>
 			</div>
-		</div>
+    </div>
+    <div class="page-breadcrumb">
+      <div class="container-full">
+        <ol class="breadcrumb">
+          <li><a href="${context}/manager?project=${project.name}"><strong>Project</strong> $project.name</a></li>
+          <li class="active"><strong>Flow</strong> $flowid</li>
+        </ol>
+      </div>
+    </div>
 
 		<div class="container-full">
-      
-  #parse ("azkaban/webapp/servlet/velocity/alerts.vm")
-  
-  ## Breadcrumbs
 
-      <ol class="breadcrumb">
-        <li><a href="${context}/manager?project=${project.name}"><strong>Project</strong> $project.name</a></li>
-        <li class="active"><strong>Flow</strong> $flowid</li>
-      </ol>
+  #parse ("azkaban/webapp/servlet/velocity/alerts.vm")
 
   ## Tabs
 
-			<ul class="nav nav-tabs" id="headertabs">
+			<ul class="nav nav-tabs nav-sm" id="headertabs">
 				<li id="graphViewLink"><a href="#graph">Graph</a></li>
 				<li id="executionsViewLink"><a href="#executions">Executions</a></li>
 				<li id="summaryViewLink"><a href="#summary">Summary</a></li>
 			</ul>
     </div>
-					
+
 	## Graph view.
 
 	#parse ("azkaban/webapp/servlet/velocity/flowgraphview.vm")
@@ -145,9 +147,9 @@
       <div id="flow-stats-container">
         <div class="row">
           <div class="col-xs-12">
-            <div class="alert alert-info">
+            <div class="callout callout-info">
               <h4>Analyze last run</h4>
-              <p>Analyze the last run for aggregate performance statistics. <strong>Note:</strong> this may take a few minutes, especially if your flow is large.</p>
+              <p>Analyze the last run for aggregate performance statistics. Note: this may take a few minutes, especially if your flow is large.</p>
               <p>
                 <button type="button" id="analyze-btn" class="btn btn-primary">Analyze</button>
               </p>
@@ -166,6 +168,7 @@
 	#parse ("azkaban/webapp/servlet/velocity/invalidsessionmodal.vm")
 	#parse ("azkaban/webapp/servlet/velocity/flowexecutionpanel.vm")
 	#parse ("azkaban/webapp/servlet/velocity/messagedialog.vm")
+	#parse ("azkaban/webapp/servlet/velocity/slapanel.vm")
 		</div><!-- /.container -->
 #end
 	</body>
